@@ -6,19 +6,19 @@
     <meta name="theme-color" content="#101119">
     <meta name="description" content="Conoce a los conductores de IllicitSpeed XS y sus habilidades especiales.">
     <title>Conductores · IllicitSpeed XS</title>
-    <link rel="stylesheet" href="styles.css?v=4">
-    <script src="app.js?v=4" defer></script>
+    <link rel="stylesheet" href="styles.css?v=5">
+    <script src="app.js?v=5" defer></script>
   </head>
   <body>
     <main class="app" aria-label="Selección de conductores">
       <div class="viewer" id="viewer">
         <img id="portrait" class="portrait" src="PJ0.png" alt="Ninguno" draggable="false">
         <img id="lock" class="lock" src="BL.png" alt="" draggable="false" hidden>
+        <p id="intro-hint" class="intro-hint">Toca al personaje para ver su habilidad.<br>Mantén pulsado para conocerlo.</p>
         <button id="previous" class="hotspot arrow previous" type="button" aria-label="Conductor anterior"></button>
         <button id="next" class="hotspot arrow next" type="button" aria-label="Conductor siguiente"></button>
         <button id="character" class="hotspot character" type="button" aria-label="Personaje: toca para ver su habilidad; mantén pulsado para conocer al conductor"></button>
       </div>
-      <p class="hint">Toca al personaje para ver su habilidad · Mantén pulsado para conocerlo</p>
       <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>
     </main>
 

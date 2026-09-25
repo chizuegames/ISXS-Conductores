@@ -35,6 +35,7 @@ const lockedIds = new Set([7, 8, 9, 10, 11, 12, 18]);
 const hiddenIds = [15, 16, 17];
 const portrait = document.querySelector('#portrait');
 const lock = document.querySelector('#lock');
+const introHint = document.querySelector('#intro-hint');
 const character = document.querySelector('#character');
 const panel = document.querySelector('#panel');
 const title = document.querySelector('#panel-title');
@@ -72,6 +73,7 @@ function show(id) {
   portrait.src = `PJ${id}.png`;
   portrait.alt = id === 0 ? 'Ninguno' : drivers[id].name;
   lock.hidden = !isLocked(id);
+  introHint.hidden = id !== 0;
   character.setAttribute('aria-label', id === 0
     ? 'Ninguno. Mantén pulsado para introducir la clave de personajes ocultos.'
     : isLocked(id)
