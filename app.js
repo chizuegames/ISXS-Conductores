@@ -2,9 +2,10 @@
 // de una web estática siempre puede consultarse desde el navegador.
 const UNLOCK_CODE = '24680';
 const HIDDEN_CODE = '13579';
-const STORAGE_KEY = 'isxs-conductores-v3';
-const PREVIOUS_STORAGE_KEY = 'isxs-conductores-v2';
-const LEGACY_STORAGE_KEY = 'isxs-conductores-v1';
+const STORAGE_KEY = 'isxs-conductores-v4';
+const PREVIOUS_STORAGE_KEY = 'isxs-conductores-v3';
+const LEGACY_STORAGE_KEY = 'isxs-conductores-v2';
+const OLDEST_STORAGE_KEY = 'isxs-conductores-v1';
 const HOLD_MS = 650;
 
 const profiles = {
@@ -46,8 +47,8 @@ const colors = {
   7: '#8b61d4', 8: '#d94849', 9: '#38cbdc', 10: '#a3d946', 11: '#eab447', 12: '#17191e',
   13: '#f0f3f5', 14: '#852b4a', 15: '#a0448f', 16: '#3aa99b', 17: '#e7653c', 18: '#315abd'
 };
-const lockedIds = new Set([7, 8, 9, 10, 11, 17, 18]);
-const hiddenIds = [14, 15, 16];
+const lockedIds = new Set([7, 8, 9, 10, 11, 12, 18]);
+const hiddenIds = [14, 15, 16, 17];
 const portrait = document.querySelector('#portrait');
 const lock = document.querySelector('#lock');
 const introHint = document.querySelector('#intro-hint');
@@ -68,10 +69,11 @@ function loadState() {
   try {
     const current = localStorage.getItem(STORAGE_KEY);
     const previous = localStorage.getItem(PREVIOUS_STORAGE_KEY);
-    const saved = JSON.parse(current || previous || localStorage.getItem(LEGACY_STORAGE_KEY) || '{}');
+    const saved = JSON.parse(current || previous || localStorage.getItem(LEGACY_STORAGE_KEY) || localStorage.getItem(OLDEST_STORAGE_KEY) || '{}');
     const oldToNew = { 10: 17, 11: 10, 12: 11 };
-    const unlocked = Array.isArray(saved.unlocked) ? saved.unlocked.map(id => current ? id : (oldToNew[id] || id)).filter(id => lockedIds.has(id)) : [];
-    return { unlocked: [...new Set(unlocked)], hidden: (current !== null || previous !== null) && saved.hidden === true };
+    const correctedIds = current !== null || previous !== null;
+    const unlocked = Array.isArray(saved.unlocked) ? saved.unlocked.map(id => correctedIds ? id : (oldToNew[id] || id)).filter(id => lockedIds.has(id)) : [];
+    return { unlocked: [...new Set(unlocked)], hidden: current !== null && saved.hidden === true };
   } catch { return { unlocked: [], hidden: false }; }
 }
 
@@ -81,7 +83,7 @@ function saveState() {
 
 function sequence() {
   return [0, ...Array.from({ length: 6 }, (_, i) => i + 1), 13,
-    ...Array.from({ length: 6 }, (_, i) => i + 7), 17, 18,
+    ...Array.from({ length: 6 }, (_, i) => i + 7), 18,
     ...(state.hidden ? hiddenIds : [])];
 }
 
@@ -163,7 +165,7 @@ function codePanel(type, id) {
   const secret = type === 'hidden';
   openPanel(secret ? 'Acceso oculto' : 'Desbloquear conductor',
     secret ? 'Conductores ocultos' : drivers[id].name,
-    [secret ? 'Introduce la clave para revelar a Maicy, Worgen y Mei.' : `Introduce la clave numérica para desbloquear a ${drivers[id].name}.`]);
+    [secret ? 'Introduce la clave para revelar a Maicy, Worgen, Mei y Kohei.' : `Introduce la clave numérica para desbloquear a ${drivers[id].name}.`]);
 
   const label = document.createElement('label');
   label.className = 'code-label';
