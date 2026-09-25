@@ -99,7 +99,7 @@ function button(label, callback, primary = false) {
 }
 
 function openPanel(label, heading, paragraphs) {
-  panel.classList.remove('ability-panel');
+  panel.classList.remove('ability-panel', 'bio-panel', 'dark-bio');
   panel.style.removeProperty('--accent-rgb');
   panel.style.removeProperty('--ink');
   eyebrow.textContent = label;
@@ -121,14 +121,13 @@ function info(type) {
   openPanel(type === 'ability' ? `Habilidad especial · ${driver.name}` : 'Conductor',
     type === 'ability' ? driver.ability : driver.name,
     [type === 'ability' ? driver.detail : driver.bio]);
-  if (type === 'ability') {
-    const hex = colors[currentId];
-    const rgb = [1, 3, 5].map(start => parseInt(hex.slice(start, start + 2), 16));
-    const brightness = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000;
-    panel.style.setProperty('--accent-rgb', rgb.join(', '));
-    panel.style.setProperty('--ink', brightness > 150 ? '#141923' : '#ffffff');
-    panel.classList.add('ability-panel');
-  }
+  const hex = colors[currentId];
+  const rgb = [1, 3, 5].map(start => parseInt(hex.slice(start, start + 2), 16));
+  const brightness = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000;
+  panel.style.setProperty('--accent-rgb', rgb.join(', '));
+  panel.style.setProperty('--ink', brightness > 150 ? '#141923' : '#ffffff');
+  panel.classList.add(type === 'ability' ? 'ability-panel' : 'bio-panel');
+  if (type === 'bio' && currentId === 13) panel.classList.add('dark-bio');
   button('Volver', () => panel.close(), true);
 }
 
