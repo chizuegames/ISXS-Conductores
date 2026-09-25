@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#101119">
+    <meta name="description" content="Conoce a los conductores de IllicitSpeed XS y sus habilidades especiales.">
+    <title>Conductores · IllicitSpeed XS</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <main class="app" aria-label="Selección de conductores">
+      <div class="viewer" id="viewer">
+        <img id="portrait" class="portrait" src="PJ0.png" alt="Ninguno" draggable="false">
+        <img id="lock" class="lock" src="BL.png" alt="" draggable="false" hidden>
+        <button id="previous" class="hotspot arrow previous" type="button" aria-label="Conductor anterior"></button>
+        <button id="next" class="hotspot arrow next" type="button" aria-label="Conductor siguiente"></button>
+        <button id="character" class="hotspot character" type="button" aria-label="Personaje: toca para ver su habilidad; mantén pulsado para conocer al conductor"></button>
+      </div>
+      <p class="hint">Toca al personaje para ver su habilidad · Mantén pulsado para conocerlo</p>
+      <p id="announcement" class="sr-only" role="status" aria-live="polite"></p>
+    </main>
+
+    <dialog id="panel" aria-labelledby="panel-title">
+      <div class="panel-inner">
+        <button id="close" class="close" type="button" aria-label="Cerrar">×</button>
+        <p id="panel-eyebrow" class="eyebrow"></p>
+        <h1 id="panel-title"></h1>
+        <div id="panel-body" class="panel-body"></div>
+        <div id="panel-actions" class="panel-actions"></div>
+      </div>
+    </dialog>
+  </body>
+</html>
