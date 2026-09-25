@@ -2,11 +2,12 @@
 // de una web estática siempre puede consultarse desde el navegador.
 const UNLOCK_CODE = '24680';
 const HIDDEN_CODE = '13579';
-const STORAGE_KEY = 'isxs-conductores-v2';
-const PREVIOUS_STORAGE_KEY = 'isxs-conductores-v1';
+const STORAGE_KEY = 'isxs-conductores-v3';
+const PREVIOUS_STORAGE_KEY = 'isxs-conductores-v2';
+const LEGACY_STORAGE_KEY = 'isxs-conductores-v1';
 const HOLD_MS = 650;
 
-const drivers = {
+const profiles = {
   1: { name: 'Astra Quell', ability: 'Impulso', detail: 'Cuando otro auto queda inmediatamente detrás de Astra, Impulso se activa de inmediato y Astra avanza 1 espacio. El vehículo que acaba de colocarse detrás de ella no puede aprovechar esa posición para hacer rebufo sobre Astra. Así le resulta más difícil seguirla de cerca.', bio: 'Astra es decidida y competitiva. Le incomoda quedarse atrapada detrás de otros vehículos y busca mantener el ritmo de la carrera. Cuando alguien intenta seguirla de cerca, responde acelerando y defendiendo el espacio que ha ganado.' },
   2: { name: 'Keilan Androx', ability: 'Soberbia', detail: 'Al finalizar cada ronda, comprueba la posición de Keilan. Si termina en el último lugar de la carrera, obtiene 1 punto de energía. Su posición durante el resto de la ronda no importa: el beneficio depende de cómo quede al cerrarla.', bio: 'Keilan mantiene la confianza incluso cuando la carrera va en su contra. Su actitud despreocupada puede hacer pensar que no le importa perder terreno, pero observa la pista y espera el momento para recuperarse.' },
   3: { name: 'Nova Sabriel', ability: 'Sobrecarga', detail: 'Nova puede descartar una mejora instalada en su auto o sacrificar 1 punto de escudo para recuperar 3 puntos de energía. La mejora o el escudo utilizado se pierde y la energía se obtiene de inmediato.', bio: 'Nova conduce con audacia y suele llevar su vehículo al límite. No se aferra a sus recursos: si necesita energía para seguir en carrera, está dispuesta a sacrificar una mejora o parte de su protección.' },
@@ -27,13 +28,26 @@ const drivers = {
   18: { name: 'Eis Silver', ability: 'SuperCarga', detail: 'Mientras Eis esté en primera o segunda marcha, paga 1 punto de energía menos al activar una habilidad o una modificación de su vehículo. El descuento se aplica cada vez que activa uno de esos efectos en esas marchas.', bio: 'Eis administra con cuidado los recursos de su vehículo. Prefiere preparar una buena jugada antes de acelerar sin rumbo. Incluso en marchas bajas sabe aprovechar sus habilidades y modificaciones para mantener una ventaja.' }
 };
 
+// La ficha de cada conductor se asocia al nombre impreso en su archivo PJ.
+const drivers = {
+  ...profiles,
+  10: profiles[11], // Salem
+  11: profiles[12], // Yuuky
+  12: profiles[13], // Kumi
+  13: profiles[14], // Miuna
+  14: profiles[15], // Maicy
+  15: profiles[16], // Worgen
+  16: profiles[17], // Mei
+  17: profiles[10]  // Kohei
+};
+
 const colors = {
   1: '#ef8732', 2: '#32c6bf', 3: '#ed4bb0', 4: '#777f3d', 5: '#70ccef', 6: '#f2cd44',
-  7: '#8b61d4', 8: '#d94849', 9: '#38cbdc', 10: '#e7653c', 11: '#a3d946', 12: '#eab447',
-  13: '#17191e', 14: '#f0f3f5', 15: '#852b4a', 16: '#a0448f', 17: '#3aa99b', 18: '#315abd'
+  7: '#8b61d4', 8: '#d94849', 9: '#38cbdc', 10: '#a3d946', 11: '#eab447', 12: '#17191e',
+  13: '#f0f3f5', 14: '#852b4a', 15: '#a0448f', 16: '#3aa99b', 17: '#e7653c', 18: '#315abd'
 };
-const lockedIds = new Set([7, 8, 9, 10, 11, 12, 18]);
-const hiddenIds = [15, 16, 17];
+const lockedIds = new Set([7, 8, 9, 10, 11, 17, 18]);
+const hiddenIds = [14, 15, 16];
 const portrait = document.querySelector('#portrait');
 const lock = document.querySelector('#lock');
 const introHint = document.querySelector('#intro-hint');
@@ -53,8 +67,11 @@ let pointerStart;
 function loadState() {
   try {
     const current = localStorage.getItem(STORAGE_KEY);
-    const saved = JSON.parse(current || localStorage.getItem(PREVIOUS_STORAGE_KEY) || '{}');
-    return { unlocked: Array.isArray(saved.unlocked) ? saved.unlocked.filter(id => lockedIds.has(id)) : [], hidden: current !== null && saved.hidden === true };
+    const previous = localStorage.getItem(PREVIOUS_STORAGE_KEY);
+    const saved = JSON.parse(current || previous || localStorage.getItem(LEGACY_STORAGE_KEY) || '{}');
+    const oldToNew = { 10: 17, 11: 10, 12: 11 };
+    const unlocked = Array.isArray(saved.unlocked) ? saved.unlocked.map(id => current ? id : (oldToNew[id] || id)).filter(id => lockedIds.has(id)) : [];
+    return { unlocked: [...new Set(unlocked)], hidden: (current !== null || previous !== null) && saved.hidden === true };
   } catch { return { unlocked: [], hidden: false }; }
 }
 
@@ -63,8 +80,8 @@ function saveState() {
 }
 
 function sequence() {
-  return [0, ...Array.from({ length: 6 }, (_, i) => i + 1), 14,
-    ...Array.from({ length: 7 }, (_, i) => i + 7), 18,
+  return [0, ...Array.from({ length: 6 }, (_, i) => i + 1), 13,
+    ...Array.from({ length: 6 }, (_, i) => i + 7), 17, 18,
     ...(state.hidden ? hiddenIds : [])];
 }
 
@@ -131,7 +148,7 @@ function info(type) {
   panel.style.setProperty('--accent-rgb', rgb.join(', '));
   panel.style.setProperty('--ink', brightness > 150 ? '#141923' : '#ffffff');
   panel.classList.add(type === 'ability' ? 'ability-panel' : 'bio-panel');
-  if (type === 'bio' && currentId === 13) panel.classList.add('dark-bio');
+  if (type === 'bio' && currentId === 12) panel.classList.add('dark-bio');
   button('Volver', () => panel.close(), true);
 }
 
@@ -173,7 +190,7 @@ function codePanel(type, id) {
       input.select();
       return;
     }
-    if (secret) { state.hidden = true; show(15); }
+    if (secret) { state.hidden = true; show(14); }
     else { state.unlocked = [...new Set([...state.unlocked, id])]; show(id); }
     saveState();
     panel.close();
