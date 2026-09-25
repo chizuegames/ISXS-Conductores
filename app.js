@@ -2,7 +2,8 @@
 // de una web estática siempre puede consultarse desde el navegador.
 const UNLOCK_CODE = '24680';
 const HIDDEN_CODE = '13579';
-const STORAGE_KEY = 'isxs-conductores-v1';
+const STORAGE_KEY = 'isxs-conductores-v2';
+const PREVIOUS_STORAGE_KEY = 'isxs-conductores-v1';
 const HOLD_MS = 650;
 
 const drivers = {
@@ -51,8 +52,9 @@ let pointerStart;
 
 function loadState() {
   try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-    return { unlocked: Array.isArray(saved.unlocked) ? saved.unlocked.filter(id => lockedIds.has(id)) : [], hidden: saved.hidden === true };
+    const current = localStorage.getItem(STORAGE_KEY);
+    const saved = JSON.parse(current || localStorage.getItem(PREVIOUS_STORAGE_KEY) || '{}');
+    return { unlocked: Array.isArray(saved.unlocked) ? saved.unlocked.filter(id => lockedIds.has(id)) : [], hidden: current !== null && saved.hidden === true };
   } catch { return { unlocked: [], hidden: false }; }
 }
 
