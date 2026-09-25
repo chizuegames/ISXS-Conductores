@@ -1,9 +1,9 @@
 :root { color-scheme: dark; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 * { box-sizing: border-box; }
-html, body { margin: 0; min-height: 100%; }
+html, body { margin: 0; min-height: 100%; overflow: hidden; }
 body { background: radial-gradient(circle at 50% 35%, #32354b, #11121b 64%, #090a0f); color: #f5f6ff; }
-.app { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 8px max(8px, env(safe-area-inset-bottom)); }
-.viewer { position: relative; width: min(100%, 532px, calc((100dvh - 54px) * 532 / 842)); aspect-ratio: 532 / 842; box-shadow: 0 16px 50px #0009; background: #1b1b1b; overflow: hidden; }
+.app { position: fixed; top: 0; left: 100dvw; width: 100dvh; height: 100dvw; transform-origin: top left; transform: rotate(-90deg); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px; }
+.viewer { position: relative; width: min(100%, 532px, calc((100dvw - 54px) * 532 / 842)); aspect-ratio: 532 / 842; box-shadow: 0 16px 50px #0009; background: #1b1b1b; overflow: hidden; }
 .portrait, .lock { display: block; position: absolute; inset: 0; width: 100%; height: 100%; user-select: none; pointer-events: none; }
 .portrait { object-fit: fill; }
 .lock { object-fit: fill; z-index: 1; }
@@ -16,8 +16,11 @@ body { background: radial-gradient(circle at 50% 35%, #32354b, #11121b 64%, #090
 .character { left: 18%; top: 7%; width: 64%; height: 68%; touch-action: none; }
 .hint { margin: 10px 8px 0; color: #b9c1d3; text-align: center; font-size: clamp(11px, 2.5vw, 13px); line-height: 1.25; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-dialog { width: min(92vw, 440px); max-height: min(85dvh, 720px); padding: 0; border: 1px solid #68748c; border-radius: 18px; background: linear-gradient(155deg, #272c3b, #141821); color: #f4f7ff; box-shadow: 0 24px 70px #000c; }
+dialog { position: fixed; inset: auto; top: 50%; left: 50%; margin: 0; transform: translate(-50%, -50%) rotate(-90deg); width: min(92dvh, 440px); max-height: min(85dvw, 720px); padding: 0; border: 1px solid #68748c; border-radius: 18px; background: linear-gradient(155deg, #272c3b, #141821); color: #f4f7ff; box-shadow: 0 24px 70px #000c; }
 dialog::backdrop { background: #070a12ca; backdrop-filter: blur(5px); }
+dialog.ability-panel { background: rgba(var(--accent-rgb), .84); color: var(--ink); border-color: rgba(var(--accent-rgb), .95); backdrop-filter: blur(10px); }
+dialog.ability-panel .eyebrow, dialog.ability-panel .panel-body, dialog.ability-panel .close { color: var(--ink); }
+dialog.ability-panel .panel-actions button.primary { background: var(--ink); border-color: var(--ink); color: rgb(var(--accent-rgb)); }
 .panel-inner { position: relative; padding: 28px 24px 23px; }
 .close { position: absolute; top: 12px; right: 13px; width: 36px; height: 36px; border: 0; background: transparent; color: #d9e4fc; font-size: 30px; line-height: 1; cursor: pointer; }
 .eyebrow { margin: 0 35px 5px 0; color: #9cddf9; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .13em; }
@@ -32,4 +35,4 @@ h1 { margin: 0 30px 14px 0; font-size: clamp(22px, 5vw, 28px); line-height: 1.1;
 .code-label { display: block; margin: 12px 0 6px; font-weight: 650; }
 .code-input { width: 100%; font: inherit; letter-spacing: .25em; padding: 11px 12px; background: #0d1421; border: 1px solid #8290a4; color: white; border-radius: 8px; }
 .error { margin-top: 9px !important; color: #ffb7b7; font-weight: 650; }
-@media (max-height: 540px) { .app { justify-content: flex-start; } .viewer { width: min(100%, 532px, calc((100dvh - 42px) * 532 / 842)); } }
+@media (max-width: 540px) { .viewer { width: min(100%, 532px, calc((100dvw - 42px) * 532 / 842)); } }
