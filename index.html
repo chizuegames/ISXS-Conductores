@@ -7,7 +7,7 @@
     <meta name="description" content="Conoce a los conductores de IllicitSpeed XS y sus habilidades especiales.">
     <title>Conductores · IllicitSpeed XS</title>
     <link rel="stylesheet" href="styles.css?v=5">
-    <script src="app.js?v=8" defer></script>
+    <script src="app.js?v=9" defer></script>
   </head>
   <body>
     <main class="app" aria-label="Selección de conductores">
@@ -15,6 +15,14 @@
         <img id="portrait" class="portrait" src="PJ0.png" alt="Ninguno" draggable="false">
         <img id="lock" class="lock" src="BL.png" alt="" draggable="false" hidden>
         <p id="intro-hint" class="intro-hint">Toca al personaje para ver su habilidad.<br>Mantén pulsado para conocerlo.</p>
+        <button id="pin-character" class="pin-character" type="button" aria-label="Fijar este conductor y desactivar las flechas" aria-pressed="false" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <rect x="5" y="10" width="14" height="11" rx="2"></rect>
+            <path class="shackle-closed" d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+            <path class="shackle-open" d="M8 10V7a4 4 0 0 1 7.5-2"></path>
+            <circle cx="12" cy="15.5" r="1"></circle>
+          </svg>
+        </button>
         <button id="previous" class="hotspot arrow previous" type="button" aria-label="Conductor anterior"></button>
         <button id="next" class="hotspot arrow next" type="button" aria-label="Conductor siguiente"></button>
         <button id="character" class="hotspot character" type="button" aria-label="Personaje: toca para ver su habilidad; mantén pulsado para conocer al conductor"></button>

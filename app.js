@@ -53,6 +53,10 @@ const portrait = document.querySelector('#portrait');
 const lock = document.querySelector('#lock');
 const introHint = document.querySelector('#intro-hint');
 const character = document.querySelector('#character');
+const viewer = document.querySelector('#viewer');
+const pinCharacter = document.querySelector('#pin-character');
+const previous = document.querySelector('#previous');
+const next = document.querySelector('#next');
 const panel = document.querySelector('#panel');
 const title = document.querySelector('#panel-title');
 const eyebrow = document.querySelector('#panel-eyebrow');
@@ -61,6 +65,7 @@ const actions = document.querySelector('#panel-actions');
 const announcement = document.querySelector('#announcement');
 let state = loadState();
 let currentId = 0;
+let navigationLocked = false;
 let holdTimer;
 let held = false;
 let pointerStart;
@@ -89,12 +94,25 @@ function sequence() {
 
 function isLocked(id) { return lockedIds.has(id) && !state.unlocked.includes(id); }
 
+function updateNavigationLock() {
+  previous.disabled = navigationLocked;
+  next.disabled = navigationLocked;
+  viewer.classList.toggle('navigation-locked', navigationLocked);
+  pinCharacter.setAttribute('aria-pressed', String(navigationLocked));
+  pinCharacter.setAttribute('aria-label', navigationLocked
+    ? 'Quitar el candado y habilitar las flechas'
+    : 'Fijar este conductor y desactivar las flechas');
+}
+
 function show(id) {
+  if (currentId !== id) navigationLocked = false;
   currentId = id;
   portrait.src = `PJ${id}.png`;
   portrait.alt = id === 0 ? 'Ninguno' : drivers[id].name;
   lock.hidden = !isLocked(id);
   introHint.hidden = id !== 0;
+  pinCharacter.hidden = id === 0 || isLocked(id);
+  updateNavigationLock();
   character.setAttribute('aria-label', id === 0
     ? 'Ninguno. Mantén pulsado para introducir la clave de personajes ocultos.'
     : isLocked(id)
@@ -108,6 +126,7 @@ function show(id) {
 }
 
 function move(direction) {
+  if (navigationLocked) return;
   const list = sequence();
   show(list[(list.indexOf(currentId) + direction + list.length) % list.length]);
 }
@@ -210,8 +229,9 @@ function longPress() {
   else info('bio');
 }
 
-document.querySelector('#previous').addEventListener('click', () => move(-1));
-document.querySelector('#next').addEventListener('click', () => move(1));
+previous.addEventListener('click', () => move(-1));
+next.addEventListener('click', () => move(1));
+pinCharacter.addEventListener('click', () => { navigationLocked = !navigationLocked; updateNavigationLock(); });
 document.querySelector('#close').addEventListener('click', () => panel.close());
 panel.addEventListener('click', event => { if (event.target === panel) panel.close(); });
 
